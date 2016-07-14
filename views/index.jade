@@ -1,0 +1,45 @@
+extends ./template.jade
+
+block includes
+	link(rel="stylesheet" href="/css/styles.css")
+	script(src="/js/app.js")
+
+block content
+	body
+		.container-fluid
+			.row
+				#title.col-sm-10.col-sm-offset-1.text-center.pane
+					h1 Happiness Survey
+			.row
+				.col-sm-8.col-sm-offset-2
+					#tabNav.pane
+						ul.nav.nav-tabs(role="tablist")
+							li.active(role="presentation")
+								a#surveyTab(href="#survey" role="tab" data-toggle="tab") Survey
+							li(role="presentation")
+								a#dataTab(href="#data" role="tab" data-toggle="tab") Data
+						.tab-content
+							#survey.tab-pane.active
+								.form-horizontal
+									.form-group
+										label.col-sm-3.control-label Gender
+										.col-sm-8
+											select.form-control
+												option(value="m") Male
+												option(value="f") Female
+									.form-group
+										label.col-sm-3.control-label Age
+										.col-sm-8
+											input.form-control(type="number" placeholder="e.g. 25")
+											
+									.form-group
+										label.col-sm-3.control-label How happy are you?
+										.col-sm-8.text-center
+											span#happyValue 8
+											input(type="range" min=1 max=10)
+									.form-group
+										.col-sm-4.col-sm-offset-4
+											button.form-control.btn.btn-primary Submit
+							#data.tab-pane.text-center
+								h3 Current Data
+				

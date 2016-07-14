@@ -1,0 +1,20 @@
+html, body {
+	background: #7cad3e;
+}
+
+h1, h2, h3 {
+	margin-top: 0px;
+}
+
+/* Panes are like Material Design Cards */
+.pane {
+	background: white;
+	color: black;
+	box-shadow: 10px 10px 5px #777;
+	margin-top: 15px;
+	padding: 10px;
+}
+
+.tab-pane {
+	margin-top:10px;
+}
