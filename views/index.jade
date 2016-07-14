@@ -24,22 +24,22 @@ block content
 									.form-group
 										label.col-sm-3.control-label Gender
 										.col-sm-8
-											select.form-control
+											select(data-bind="value: form.gender").form-control
 												option(value="m") Male
 												option(value="f") Female
 									.form-group
 										label.col-sm-3.control-label Age
 										.col-sm-8
-											input.form-control(type="number" placeholder="e.g. 25")
+											input.form-control(data-bind="value: form.age" type="number" placeholder="e.g. 25")
 											
 									.form-group
 										label.col-sm-3.control-label How happy are you?
 										.col-sm-8.text-center
-											span#happyValue 8
-											input(type="range" min=1 max=10)
+											span#happyValue(data-bind="text: form.happy") 8
+											input#happySlider(type="range" data-bind="value: form.happy" min=1 max=10 title="1 is least happy, 10 is very happy")
 									.form-group
 										.col-sm-4.col-sm-offset-4
-											button.form-control.btn.btn-primary Submit
+											button.form-control.btn.btn-primary(data-bind="click: form.submit") Submit
 							#data.tab-pane.text-center
 								h3 Current Data
-				
+								#data-container
