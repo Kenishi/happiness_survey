@@ -4,7 +4,7 @@
   "description": "Frontend test",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "TEST=1 mocha ./tests",
     "start": "node index.js"
   },
   "author": "Jeremy may",
@@ -13,8 +13,13 @@
     "body-parser": "^1.15.2",
     "express": "^4.14.0",
     "jade": "^1.11.0",
+    "lodash": "^4.13.1",
     "socket.io": "^1.4.8",
     "sqlite3": "^3.1.4",
     "winston": "^2.2.0"
+  },
+  "devDependencies": {
+    "mocha": "^2.5.3",
+    "should": "^9.0.2"
   }
 }

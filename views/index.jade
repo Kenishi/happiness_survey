@@ -1,7 +1,9 @@
 extends ./template.jade
 
 block includes
+	link(rel="stylesheet" href="/css/sweetalert.css")
 	link(rel="stylesheet" href="/css/styles.css")
+	script(src="/js/sweetalert.min.js")
 	script(src="/js/app.js")
 
 block content
@@ -30,7 +32,7 @@ block content
 									.form-group
 										label.col-sm-3.control-label Age
 										.col-sm-8
-											input.form-control(data-bind="value: form.age" type="number" placeholder="e.g. 25")
+											input.form-control(data-bind="value: form.age" type="number" placeholder="e.g. 25" required)
 											
 									.form-group
 										label.col-sm-3.control-label How happy are you?
@@ -43,3 +45,7 @@ block content
 							#data.tab-pane.text-center
 								h3 Current Data
 								#data-container
+									.chart-block
+										svg#happyViaTime
+									.chart-block
+										svg#genderHappiness
