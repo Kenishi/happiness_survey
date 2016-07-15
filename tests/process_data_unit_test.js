@@ -24,13 +24,19 @@ var data = [
 describe("Process Data Unit Test", function() {
 	this.timeout(200);
 
-	it("should return ageAndGender", () => {
+	it.only("should return ageAndGender", () => {
 		var result = socket_handler.handler.processAgeAndGender(data);
-		result["13"].should.be.deepEqual([1,0]);
-		result["19"].should.be.deepEqual([1,2]);
-		result["21"].should.be.deepEqual([0,1]);
-		result["31"].should.be.deepEqual([1,0]);
-		result["55"].should.be.deepEqual([1,0]);
+		console.log(result);
+		var expect = {
+			"0-13": [1,0],
+			"14-18": [0,0],
+			"19-29": [1,3],
+			"30-49": [1,0],
+			"50-60": [1,0],
+			"61-70": [0,0],
+			"71+": [0,0]
+		};
+		result.should.be.deepEqual(expect);
 	});
 
 	it("should return happyViaTime", () => {

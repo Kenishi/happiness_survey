@@ -18,3 +18,12 @@ h1, h2, h3 {
 .tab-pane {
 	margin-top:10px;
 }
+
+.chart-block {
+	height: 300px;
+	width: 100%;
+}
+
+/*#data-container {
+	height: 1000px;
+}*/

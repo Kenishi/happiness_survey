@@ -121,18 +121,32 @@ SocketHandler.prototype.processData = function(data) {
 };
 
 function processAgeAndGender(data) {
+	var bins = {
+		"0-13": [],
+		"14-18": [],
+		"19-29": [],
+		"30-49": [],
+		"50-60": [],
+		"61-70": [],
+		"71+": []
+	};
 	return lodash.chain(data)
 					.reduce((cur, entry) => {
 						var age = entry.age;
-						cur[age] = cur.hasOwnProperty(age) ? cur[age].concat([entry]) : [entry];
+						if(age <= 13) cur["0-13"].push(entry);
+						else if(age > 13 && age <= 18) cur["14-18"].push(entry);
+						else if(age > 18 && age <= 29) cur["19-29"].push(entry);
+						else if(age > 29 && age <= 49) cur["30-49"].push(entry);
+						else if(age > 49 && age <= 60) cur["50-60"].push(entry);
+						else if(age > 60 && age <= 70) cur["61-70"].push(entry);
+						else cur["71+"].push(entry);
 						return cur;
-					}, {})
-					.reduce((cur, entries) => {
-						var age = entries[0].age;
+					}, bins)
+					.reduce((cur, entries, key) => {
 						// Age is an array of all participants of the same age
 						var count = lodash.chain(entries)
 									.reduce((cur, entry) => {
-										if(entry.gender === 0) {
+										if(entry.gender == 0) {
 											cur[0]++;
 										}
 										else {
@@ -140,7 +154,7 @@ function processAgeAndGender(data) {
 										}
 										return cur;
 									}, [0,0]).value();
-						cur[age] = count;
+						cur[key] = count;
 						return cur;
 					}, {}).value();
 }
@@ -186,18 +200,37 @@ function processGenderHappiness(data) {
 }
 
 function processAgeAndHappiness(data) {
+	var bins = {
+		"0-13": [],
+		"14-18": [],
+		"19-29": [],
+		"30-49": [],
+		"50-60": [],
+		"61-70": [],
+		"71+": []
+	};
+
 	return lodash.chain(data)
 					.reduce((cur, entry) => {
 						// Reduce data to age w/ scores
 						var age = entry.age;
-						cur[age] = cur.hasOwnProperty(age) ? cur[age].concat(entry.score) : [entry.score];
+						if(age <= 13) cur["0-13"].push(entry.score);
+						else if(age > 13 && age <= 18) cur["14-18"].push(entry.score);
+						else if(age > 18 && age <= 29) cur["19-29"].push(entry.score);
+						else if(age > 29 && age <= 49) cur["30-49"].push(entry.score);
+						else if(age > 49 && age <= 60) cur["50-60"].push(entry.score);
+						else if(age > 60 && age <= 70) cur["61-70"].push(entry.score);
+						else cur["71+"].push(entry.score);
 						return cur;
-					}, {})
+					}, bins)
 					.reduce((cur, ages, key) => {
+						// Tally and Average
 						var score_sum = lodash.chain(ages).reduce((cur, score) => {
 							return cur += score;
 						}, 0).value();
-						cur[key] = score_sum/ages.length;
+						console.log(score_sum, ages.length);
+						cur[key] = ages.length > 0 ? score_sum/ages.length : 0;
+						console.log(cur);
 						return cur;
 					}, {}).value();
 }

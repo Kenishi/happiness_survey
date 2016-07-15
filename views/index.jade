@@ -3,6 +3,7 @@ extends ./template.jade
 block includes
 	link(rel="stylesheet" href="/css/sweetalert.css")
 	link(rel="stylesheet" href="/css/styles.css")
+	script(src="/js/canvasjs.min.js")
 	script(src="/js/sweetalert.min.js")
 	script(src="/js/app.js")
 
@@ -45,7 +46,11 @@ block content
 							#data.tab-pane.text-center
 								h3 Current Data
 								#data-container
-									.chart-block
-										svg#happyViaTime
-									.chart-block
-										svg#genderHappiness
+									#ageAndGender.chart-block
+									#happyViaTime.chart-block
+									#weekendAndDay.chart-block
+									#timeOfDay.chart-block(style="margin-bottom:20px")
+									#genderHappiness.chart-block
+									#ageAndHappiness.chart-block
+
+
