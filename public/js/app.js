@@ -2,10 +2,12 @@ var socket = io("http://localhost:3000");
 
 document.onready = function() {
 	console.log("Ready");
+	
 	$("#surveyTab").click(function(e) {
 		e.preventDefault();
 		$("#survey").tab("show");
 	});
+
 	$("#dataTab").click(function(e) {
 		e.preventDefault();
 		$(this).tab("show");
@@ -13,16 +15,21 @@ document.onready = function() {
 		// Call render on the charts again
 		// to get them to resize properly now
 		// that the tab is visible
-		AgeAndGenderChart.render();
-		GenderHappinessChart.render();
-		HappyViaTimeChart.render();
-		TimeOfDayChart.render();
-		WeekendAndDayChart.render();
-		AgeAndHappinessChart.render();
+		rerender();
+	});
+
+	$("#seedTab").click(function(e) {
+		e.preventDefault();
+		$("#seed").tab("show");
+	});
+
+	$("#feedbackTab").click(function(e) {
+		e.preventDefault();
+		$("#feedback").tab("show");
 	});
 
 	ko.applyBindings(model);
-	init();
+	init(); // Setup the charts and model
 	// Delay data load by a second to let WebSocket settle
 	setTimeout(function() {
 		socket.emit("refresh");
@@ -30,6 +37,7 @@ document.onready = function() {
 };
 
 socket.on("update", function(data) {
+	console.log(data);
 	// Extract the data and update the model
 	for(var key in data) {
 		if(model.hasOwnProperty(key)) {
@@ -39,11 +47,27 @@ socket.on("update", function(data) {
 });
 
 socket.on("added", function() {
-	swal("Success", "Thanks for you submission!", "success");
+	swal("Success", "Thanks for your submission!", "success");
 	$("#dataTab").tab("show");
 });
 
 var model = {
+	curChart: ko.observable("ageAndGender"),
+	changeChart: function(place) {
+		model.curChart(place);
+		var id = "#" + place;
+		$(".chart-block").addClass("hide");
+		$(id).removeClass("hide");
+		rerender();
+	},
+	seed_form: {
+		seed_count: ko.observable(1),
+		seed: function() {
+			socket.emit("seed", {
+				count: model.seed_form.seed_count()
+			});
+		}
+	},
 	form: {
 		gender: ko.observable("m"),
 		age: ko.observable(""),
@@ -53,10 +77,26 @@ var model = {
 				swal("Error", "An age is required", "error");
 				return;
 			}
+			else if(model.form.age().length > 122) {
+				swal("Error", "The oldest person to ever live was 122, are you really older?", "error");
+				return;
+			}
 			socket.emit("submit", {
 				gender: model.form.gender(),
 				age: model.form.age(),
 				score: model.form.happy()
+			});
+		}
+	},
+	feedback: {
+		name: ko.observable(""),
+		email: ko.observable(""),
+		comments: ko.observable(""),
+		submit: function() {
+			socket.emit("feedback", {
+				name: model.feedback.name(),
+				email: model.feedback.email(),
+				comments: model.feedback.comments()
 			});
 		}
 	},
@@ -91,7 +131,13 @@ var model = {
 
 	/*
 		Format: {
-			age as integer: avg happiness
+			"0-13" : happiness avg
+			"14-18": ...
+			"19-29": ...
+			"30-49": ...
+			"50-60": ...
+			"61-70": ...
+			"71+": ...
 		}
 	 */
 	ageAndHappiness: ko.observable({}),
@@ -118,6 +164,29 @@ function init() {
 		doAgeAndHappiness(newVal);
 	});
 
+	model.curChart.subscribe(function(newVal) {
+		function wait(fn) {
+			setTimeout(fn, 5);
+		}
+		switch(newVal) {
+			case "ageAndGender":
+				wait(AgeAndGenderChart.render);
+				break;
+			case "genderHappiness":
+				wait(GenderHappinessChart.render);
+				break;
+			case "happyViaTime":
+				wait(HappyViaTimeChart.render);
+				break;
+			case "timeOfDay":
+				wait(TimeOfDayChart.render);
+				break;
+			case "ageAndHappiness":
+				wait(AgeAndHappinessChart.render);
+				break;
+		}
+	});
+
 	renderCharts();
 }
 
@@ -127,6 +196,15 @@ var AgeAndGenderChart,
 	WeekendAndDayChart,
 	TimeOfDayChart,
 	AgeAndHappinessChart;
+
+function rerender() {
+	AgeAndGenderChart.render();
+	GenderHappinessChart.render();
+	HappyViaTimeChart.render();
+	TimeOfDayChart.render();
+	WeekendAndDayChart.render();
+	AgeAndHappinessChart.render();
+}
 
 function doAgeAndGender(data) {
 	var malePoints = [];
@@ -173,7 +251,9 @@ function doHappyViaTime(data) {
 
 function doWeekEndAndDay(data) {
 	var result = data.reduce((prev, entry) => {
+		console.log(entry);
 		var date = new Date(entry[0]);
+		console.log(date);
 		if(date.getDay() == 6 || date.getDay() == 0) {
 			prev.end += entry[1];
 			prev.end_count++;
@@ -196,7 +276,6 @@ function doWeekEndAndDay(data) {
 		{ y: result.day_count > 0 ? result.day/result.day_count : 0, label: "Weekdays", legendText: "Weekdays" }
 	];
 
-	console.log(dataPoints);
 	WeekendAndDayChart.options.data[0].dataPoints = dataPoints;
 	WeekendAndDayChart.render();
 }
@@ -252,7 +331,6 @@ function doGenderHappiness(data) {
 }
 
 function doAgeAndHappiness(data) {
-	console.log(data);
 	var dataPoints = [];
 
 	for(var key in data) {
@@ -271,6 +349,9 @@ function doAgeAndHappiness(data) {
 	AgeAndHappinessChart.render();
 }
 
+/*
+	Initialize the charts
+ */
 function renderCharts() {
 	AgeAndGenderChart = new CanvasJS.Chart("ageAndGender",
 		{

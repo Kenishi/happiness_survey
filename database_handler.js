@@ -32,8 +32,15 @@ module.exports = function(path) {
  * @param {Number} score  their hapiness score, 1-10
  * @returns {Promise} returns a promise that resolves if add was successful, rejects with error
  */
-function add(gender, age, score) {
-	var time = (new Date()).getTime();
+function add(gender, age, score, timestamp) {
+	var time;
+	if(typeof timestamp === "number") {
+		time = timestamp;
+	}
+	else {
+		time = (new Date()).getTime();
+	}
+	
 	return new Promise((resolve, reject) => {
 		db.run("INSERT INTO data (timestamp, gender, age, score) VALUES (?,?,?,?)", 
 			[time, gender, age, score], (err) => {

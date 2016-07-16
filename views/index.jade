@@ -21,6 +21,10 @@ block content
 								a#surveyTab(href="#survey" role="tab" data-toggle="tab") Survey
 							li(role="presentation")
 								a#dataTab(href="#data" role="tab" data-toggle="tab") Data
+							li(role="presentation")
+								a#seedTab(href="#seed" role="tab" data-toggle="tab") Seed
+							li(role="presentation")
+								a#feedbackTab(href="#feedback" role="tab" data-toggle="tab") Feedback
 						.tab-content
 							#survey.tab-pane.active
 								.form-horizontal
@@ -45,12 +49,49 @@ block content
 											button.form-control.btn.btn-primary(data-bind="click: form.submit") Submit
 							#data.tab-pane.text-center
 								h3 Current Data
+								ul.nav.nav-pills
+									li(data-bind="attr: { class: curChart() === 'ageAndGender' ? 'active' : '' }")
+										a(data-bind="click: function() { changeChart('ageAndGender'); }") Age & Gender
+									li(data-bind="attr: { class: curChart() === 'happyViaTime' ? 'active' : '' }")
+										a(data-bind="click: function() { changeChart('happyViaTime'); }") Happy over Time
+									li(data-bind="attr: { class: curChart() === 'weekendAndDay' ? 'active' : '' }")
+										a(data-bind="click: function() { changeChart('weekendAndDay'); }") Weekend vs Weekday
+									li(data-bind="attr: { class: curChart() === 'timeOfDay' ? 'active' : '' }")
+										a(data-bind="click: function() { changeChart('timeOfDay'); }") Time of Day
+									li(data-bind="attr: { class: curChart() === 'genderHappiness' ? 'active' : '' }")
+										a(data-bind="click: function() { changeChart('genderHappiness'); }") Gender & Happiness
+									li(data-bind="attr: { class: curChart() === 'ageAndHappiness' ? 'active' : '' }")
+										a(data-bind="click: function() { changeChart('ageAndHappiness'); }") Age & Happiness
 								#data-container
 									#ageAndGender.chart-block
-									#happyViaTime.chart-block
-									#weekendAndDay.chart-block
-									#timeOfDay.chart-block(style="margin-bottom:20px")
-									#genderHappiness.chart-block
-									#ageAndHappiness.chart-block
+									#happyViaTime.chart-block.hide
+									#weekendAndDay.chart-block.hide
+									#timeOfDay.chart-block.hide
+									#genderHappiness.chart-block.hide
+									#ageAndHappiness.chart-block.hide
+							#seed.tab-pane.text-center
+								h3 Seed Data
+								.form-horizontal
+									.form-group
+										label.col-sm-3.col-sm-offset-2 How many?
+										input.col-sm-5(type="number" data-bind="value: seed_form.seed_count")
+									.form-group
+										.col-sm-4.col-sm-offset-4
+											button.btn.btn-primary.form-control(data-bind="click: seed_form.seed") Seed
+							#feedback.tab-pane.text-center
+								h3 Got something add?
+								.form-horizontal
+									.form-group
+										label.col-sm-2.col-sm-offset-2 Name
+										input.col-sm-5(type="text" data-bind="value: feedback.name")
+									.form-group
+										label.col-sm-2.col-sm-offset-2 Email
+										input.col-sm-5(type="email" data-bind="value: feedback.email")
+									.form-group
+										textarea.col-sm-6.col-sm-offset-3(placeholder="Write comments here" data-bind="value:feedback.comments")
+									.form-group
+										.col-sm-4.col-sm-offset-4
+											button.btn.btn-primary.form-control(data-bind="click: feedback.submit") Submit
+
 
 

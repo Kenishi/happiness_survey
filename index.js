@@ -44,3 +44,4 @@ process.once("exit", () => {
 	socket_handler.handler.io.close();
 	db.close();
 });
+

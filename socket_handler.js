@@ -4,6 +4,8 @@
  */
 
 var winston = require('winston');
+var seeder = require('./seeder');
+
 winston.cli();
 winston.level = "info";
 
@@ -41,10 +43,10 @@ function SocketHandler(io, db) {
 
 SocketHandler.prototype.init = function() {
 	this.io.on("connection", (socket) => {
-		winston.info("Connection");
-
 		socket.on("submit", this.submit.bind(this, socket));
 		socket.on("refresh", this.refresh.bind(this, socket));
+		socket.on("seed", this.seed.bind(this));
+		socket.on("feedback", this.feedback.bind(this));
 	});
 };
 
@@ -76,6 +78,7 @@ SocketHandler.prototype.submit = function(socket, data) {
 
 /**
  * Client has requested a snapshot of the stored data.
+ * @param {Socket} socket the client to refresh data on
  */
 SocketHandler.prototype.refresh = function(socket) {
 	console.log("Refreshing socket's data");
@@ -92,6 +95,40 @@ SocketHandler.prototype.refresh = function(socket) {
 		winston.error("An error occured during a client refresh:", err);
 	}));
 	// Return the data to the user
+};
+
+/*
+	This is the handler for the random seeding event received on socket.io
+ */
+SocketHandler.prototype.seed = function(data) {
+	var items = seeder.count(data.count);
+	console.log(items);
+	var promises = items.map((i) => {
+		return this.db.add(i.gender, i.age, i.score, i.timestamp);
+	});
+
+	Promise.all(promises)
+	.then(() => {
+		return this.db.getAll();
+	})
+	.then((allData) => {
+		var payload = this.processData(allData);
+		this.io.emit("update", payload);
+	})
+	.catch((err) => {
+		this.io.emit("serverError", { 
+			message: "An error occured during submission",
+		});
+		winston.error("An error occured during submission:", err);
+	});
+};
+
+/*
+	This is the handler for the feedback socket.io event
+ */
+SocketHandler.prototype.feedback = function(data) {
+	winston.info("Received feedback! This doesn't do anything more");
+	winston.info(data);
 };
 
 /**
@@ -160,7 +197,6 @@ function processAgeAndGender(data) {
 }
 
 function processHappyViaTime(data) {
-	console.log(data);
 	return lodash.chain(data)
 					.map((entry) => {
 						return [entry.timestamp, entry.score];
@@ -228,9 +264,7 @@ function processAgeAndHappiness(data) {
 						var score_sum = lodash.chain(ages).reduce((cur, score) => {
 							return cur += score;
 						}, 0).value();
-						console.log(score_sum, ages.length);
 						cur[key] = ages.length > 0 ? score_sum/ages.length : 0;
-						console.log(cur);
 						return cur;
 					}, {}).value();
 }
