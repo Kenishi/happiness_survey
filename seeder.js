@@ -1,3 +1,8 @@
+/*
+	Simple util for helping with generating random
+	form entries with random times
+ */
+
 module.exports = {
 	// Get one random entry
 	one: function() {

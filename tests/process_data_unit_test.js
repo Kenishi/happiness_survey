@@ -24,9 +24,8 @@ var data = [
 describe("Process Data Unit Test", function() {
 	this.timeout(200);
 
-	it.only("should return ageAndGender", () => {
+	it("should return ageAndGender", () => {
 		var result = socket_handler.handler.processAgeAndGender(data);
-		console.log(result);
 		var expect = {
 			"0-13": [1,0],
 			"14-18": [0,0],
@@ -59,15 +58,14 @@ describe("Process Data Unit Test", function() {
 	it("should return age and happiness", () => {
 		var result = socket_handler.handler.processAgeAndHappiness(data);
 		var expect = {
-			13 : 4,
-			19 : 4.67,
-			21 : 6,
-			31 : 7,
-			55 : 10
+			"0-13": 4,
+			"14-18": 0,
+			"19-29": 5,
+			"30-49": 7,
+			"50-60": 10,
+			"61-70": 0,
+			"71+": 0
 		};
-
-		// Round 19's to 2 places other wise it will be long
-		result["19"] = Number(result["19"].toFixed(2));
 
 		result.should.be.deepEqual(expect);
 	});

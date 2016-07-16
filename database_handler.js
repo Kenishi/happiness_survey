@@ -1,8 +1,16 @@
+/*
+	This handles basic interfacing with the SQLite3 database
+ */
+
 var winston = require('winston');
 var sqlite3 = require('sqlite3').verbose();
 
 
 var db;
+/**
+ * Export function
+ * @param  {String} path the path where the DB should be created
+ */
 module.exports = function(path) {
 	db = new sqlite3.Database(path);
 	db.serialize(() => {
@@ -13,6 +21,7 @@ module.exports = function(path) {
 	mod.db = db;
 	mod.add = add;
 	mod.getAll = getAll;
+	mod.clearData = clearData;
 	mod.close = function() {
 		return new Promise((resolve, reject) => {
 			db.close((err) => {
@@ -33,6 +42,7 @@ module.exports = function(path) {
  * @returns {Promise} returns a promise that resolves if add was successful, rejects with error
  */
 function add(gender, age, score, timestamp) {
+	// Check if we have a timestamp we should use
 	var time;
 	if(typeof timestamp === "number") {
 		time = timestamp;
@@ -40,7 +50,7 @@ function add(gender, age, score, timestamp) {
 	else {
 		time = (new Date()).getTime();
 	}
-	
+
 	return new Promise((resolve, reject) => {
 		db.run("INSERT INTO data (timestamp, gender, age, score) VALUES (?,?,?,?)", 
 			[time, gender, age, score], (err) => {
@@ -64,6 +74,21 @@ function getAll() {
 				return reject(err);
 			}
 			resolve(rows);
+		});
+	});
+}
+
+/**
+ * Clear all the data in the DB
+ * @return {Promise} returns a promise that resolves with nothing when done, rejects with error
+ */
+function clearData() {
+	return new Promise((resolve, reject) => {
+		db.run("DELETE FROM data", (err) => {
+			if(err) {
+				return reject(err);
+			}
+			resolve();
 		});
 	});
 }

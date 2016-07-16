@@ -22,9 +22,9 @@ block content
 							li(role="presentation")
 								a#dataTab(href="#data" role="tab" data-toggle="tab") Data
 							li(role="presentation")
-								a#seedTab(href="#seed" role="tab" data-toggle="tab") Seed
-							li(role="presentation")
 								a#feedbackTab(href="#feedback" role="tab" data-toggle="tab") Feedback
+							li(role="presentation")
+								a#adminTab(href="#admin" role="tab" data-toggle="tab") Admin
 						.tab-content
 							#survey.tab-pane.active
 								.form-horizontal
@@ -69,15 +69,20 @@ block content
 									#timeOfDay.chart-block.hide
 									#genderHappiness.chart-block.hide
 									#ageAndHappiness.chart-block.hide
-							#seed.tab-pane.text-center
+							#admin.tab-pane.text-center
 								h3 Seed Data
 								.form-horizontal
 									.form-group
-										label.col-sm-3.col-sm-offset-2 How many?
+										label.col-sm-3.col-sm-offset-2 How many entries?
 										input.col-sm-5(type="number" data-bind="value: seed_form.seed_count")
 									.form-group
 										.col-sm-4.col-sm-offset-4
 											button.btn.btn-primary.form-control(data-bind="click: seed_form.seed") Seed
+								h3 Clear Data
+								.form-horizontal
+									.form-group
+										.col-sm-4.col-sm-offset-4
+											button.btn.btn-danger.form-control(data-bind="click: clearData") Clear All Data
 							#feedback.tab-pane.text-center
 								h3 Got something add?
 								.form-horizontal

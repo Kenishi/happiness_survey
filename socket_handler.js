@@ -47,6 +47,7 @@ SocketHandler.prototype.init = function() {
 		socket.on("refresh", this.refresh.bind(this, socket));
 		socket.on("seed", this.seed.bind(this));
 		socket.on("feedback", this.feedback.bind(this));
+		socket.on("clearData", this.clearData.bind(this));
 	});
 };
 
@@ -65,7 +66,7 @@ SocketHandler.prototype.submit = function(socket, data) {
 	})
 	.then((allData) => {
 		var payload = this.processData(allData);
-		// Inform clients about updated data
+		// Inform clients about new data
 		this.io.emit("update", payload);
 	})
 	.catch((err) => {
@@ -85,6 +86,7 @@ SocketHandler.prototype.refresh = function(socket) {
 	// Fetch data from the database
 	this.db.getAll()
 	.then((allData) => {
+		// Process and send the data to the user
 		var payload = this.processData(allData);
 		socket.emit("update", payload);
 	})
@@ -94,7 +96,6 @@ SocketHandler.prototype.refresh = function(socket) {
 		});
 		winston.error("An error occured during a client refresh:", err);
 	}));
-	// Return the data to the user
 };
 
 /*
@@ -124,11 +125,25 @@ SocketHandler.prototype.seed = function(data) {
 };
 
 /*
-	This is the handler for the feedback socket.io event
+	Handler for the feedback socket.io event
  */
 SocketHandler.prototype.feedback = function(data) {
 	winston.info("Received feedback! This doesn't do anything more");
 	winston.info(data);
+};
+
+/*
+	Handler for clearData event from socket.io
+ */
+SocketHandler.prototype.clearData = function() {
+	this.db.clearData()
+	.then(() => {
+		var payload = this.processData([]);
+		this.io.emit("update", payload);
+	})
+	.catch((err) => {
+		winston.error(err);
+	});
 };
 
 /**

@@ -18,9 +18,9 @@ document.onready = function() {
 		rerender();
 	});
 
-	$("#seedTab").click(function(e) {
+	$("#adminTab").click(function(e) {
 		e.preventDefault();
-		$("#seed").tab("show");
+		$("#admin").tab("show");
 	});
 
 	$("#feedbackTab").click(function(e) {
@@ -60,6 +60,22 @@ var model = {
 		$(id).removeClass("hide");
 		rerender();
 	},
+	clearData: function() {
+		swal({
+			title: "Are you sure?",
+			text: "This will clear all the data on the server.",
+			type: "warning",
+			showCancelButton: true,
+			confirmButtonClass: "btn-danger",
+			confirmButtonText: "Clear Data",
+			closeOnConfirm: false
+		}, function(isConfirm) {
+			if(isConfirm) {
+				socket.emit("clearData");
+				swal("Cleared!", "All data has been cleared", "success");
+			}
+		});
+	},
 	seed_form: {
 		seed_count: ko.observable(1),
 		seed: function() {
@@ -98,6 +114,10 @@ var model = {
 				email: model.feedback.email(),
 				comments: model.feedback.comments()
 			});
+
+			model.feedback.name("");
+			model.feedback.email("");
+			model.feedback.comments("");
 		}
 	},
 	/*
