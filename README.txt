@@ -2,13 +2,13 @@
 
 ## Instructions
 1. Clone the repo
-1. Install [Node.JS](https://nodejs.org/en/download/), LTS or latest should both be fine.
-1. Run `npm install` in the repo folder's root, this will pull down the required dependencies needed to run the application.
-1. After npm has finished, run `npm start`
-1. If everything goes well you should see the text: `Listening on port: 3000`
-1. Visit `http://localhost:3000` to try out the Happiness Survey
-1. If you want to try the single unit test, run `npm test`
-1. To stop the server: CTRL+C
+2. Install [Node.JS](https://nodejs.org/en/download/), LTS or latest should both be fine.
+3. Run `npm install` in the repo folder's root, this will pull down the required dependencies needed to run the application.
+4. After npm has finished, run `npm start`
+5. If everything goes well you should see the text: `Listening on port: 3000`
+6. Visit `http://localhost:3000` to try out the Happiness Survey
+7. If you want to try the single unit test, run `npm test`
+8. To stop the server: CTRL+C
 
 Survey should run fine on most recent versions Chrome and Firefox, IE/Edge have not been tested.
 

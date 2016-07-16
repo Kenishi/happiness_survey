@@ -37,7 +37,6 @@ document.onready = function() {
 };
 
 socket.on("update", function(data) {
-	console.log(data);
 	// Extract the data and update the model
 	for(var key in data) {
 		if(model.hasOwnProperty(key)) {
@@ -271,9 +270,7 @@ function doHappyViaTime(data) {
 
 function doWeekEndAndDay(data) {
 	var result = data.reduce((prev, entry) => {
-		console.log(entry);
 		var date = new Date(entry[0]);
-		console.log(date);
 		if(date.getDay() == 6 || date.getDay() == 0) {
 			prev.end += entry[1];
 			prev.end_count++;
@@ -290,7 +287,6 @@ function doWeekEndAndDay(data) {
 		day_count: 0
 	});
 
-	console.log(result);
 	var dataPoints = [
 		{ y: result.end_count > 0 ? result.end/result.end_count : 0, label: "Weekends", legendText: "Weekends" },
 		{ y: result.day_count > 0 ? result.day/result.day_count : 0, label: "Weekdays", legendText: "Weekdays" }
